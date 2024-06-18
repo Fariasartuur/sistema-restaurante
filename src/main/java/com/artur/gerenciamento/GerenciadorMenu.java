@@ -34,6 +34,27 @@ public class GerenciadorMenu {
         pessoa.adicionarCliente(new Cliente("Artur", "Jardins", "1234-5678", "06-06-2004"));
     }
 
+    private void voltandoAnimacao(){
+        try {
+            // Inicia um temporizador para simular uma animação de carregamento
+            long startTime = System.currentTimeMillis();
+            long duration = 1000; // Duração da animação em milissegundos
+
+            // Loop para exibir a animação
+            while (System.currentTimeMillis() - startTime < duration) {
+                System.out.print("\rVoltando.  "); // Exibe uma parte da animação
+                Thread.sleep(500); // Aguarda 500 milissegundos
+                System.out.print("\rVoltando.. "); // Exibe outra parte da animação
+                Thread.sleep(500); // Aguarda 500 milissegundos
+                System.out.print("\rVoltando...");// Exibe outra parte da animação
+                Thread.sleep(500); // Aguarda 500 milissegundos
+            }
+            System.out.println(); // Quebra de linha após a animação
+        } catch (InterruptedException e) {
+            e.printStackTrace(); // Imprime informações sobre a exceção
+        }
+    }
+
     public int inserirInt(Scanner scanner) {
         int num = 0;
         boolean valido = false;
@@ -145,17 +166,14 @@ public class GerenciadorMenu {
                             System.out.println("Opção invalida. Voltando para o menu anterior...");
                             break;
                         }
-                    } else {
-                        opcao1 = 0;
-                        break;
                     }
-
+                    break;
                 case 2:
                     cliente = subMenuClienteCadastro(sc);
                     opcao1 = 0;
                     break;
                 case 0:
-                    System.out.println("Voltando...");
+                    voltandoAnimacao();
                     return;
                 default:
                     System.out.println("Opcao inserida invalida. Tente Novamente.");
@@ -353,7 +371,7 @@ public class GerenciadorMenu {
                     menuCozinha(sc);
                     break;
                 case 0:
-                    System.out.println("Voltando...");
+                    voltandoAnimacao();
                     break;
                 default:
                     System.out.println("Opcao inserida invalida. Tente Novamente.");
@@ -388,7 +406,7 @@ public class GerenciadorMenu {
                     menuMesas(sc);
                     break;
                 case 0:
-                    System.out.println("Voltando...");
+                    voltandoAnimacao();
                     break;
                 default:
                     System.out.println("Opção inserida inválida. Tente novamente.");
@@ -468,7 +486,7 @@ public class GerenciadorMenu {
 
                     break;
 				case 0:
-					System.out.println("Voltando...");
+                    voltandoAnimacao();
 					break;
                 default:
                     System.out.println("Opção inserida inválida. Tente novamente.");
@@ -674,8 +692,9 @@ public class GerenciadorMenu {
                         default:
                             System.out.println("Opção inserida inválida. Tente novamente.");
                     }
+                    break;
 				case 0:
-					System.out.println("Voltando...");
+                    voltandoAnimacao();
 					break;
 				default:
 					System.out.println("Opção inserida inválida. Tente novamente.");
@@ -698,7 +717,7 @@ public class GerenciadorMenu {
         Long idCliente = inserirLong(sc);
 
         if (idCliente == 0) {
-            System.out.println("Voltando...");
+            voltandoAnimacao();
             return false;
         }
 
@@ -841,7 +860,7 @@ public class GerenciadorMenu {
                             + novaMesa.getCapacidade());
                     break;
 				case 0:
-					System.out.println("Voltando...");
+                    voltandoAnimacao();
 					break;
                 default:
                     System.out.println("Opção inserida inválida. Tente novamente.");
@@ -873,8 +892,9 @@ public class GerenciadorMenu {
                     break;
                 case 3:
                     menuGerente(sc);
+                    break;
 				case 0:
-					System.out.println("Voltando...");
+                    voltandoAnimacao();
 					break;
                 default:
                     System.out.println("Opção inserida inválida. Tente novamente.");
@@ -990,7 +1010,7 @@ public class GerenciadorMenu {
                     }
                     break;
 				case 0:
-					System.out.println("Voltando...");
+                    voltandoAnimacao();
 					break;
                 default:
                     System.out.println("Opção inserida inválida. Tente novamente.");
@@ -1132,7 +1152,7 @@ public class GerenciadorMenu {
                     }
                     break;
 				case 0:
-					System.out.println("Voltando...");
+                    voltandoAnimacao();
 					break;
                 default:
                     System.out.println("Opção inserida inválida. Tente novamente.");
@@ -1250,8 +1270,10 @@ public class GerenciadorMenu {
                         default:
                             System.out.println("Opção inserida inválida. Tente novamente.");
                     }
+                    break;
 				case 0:
-					System.out.println("Voltando...");
+                    voltandoAnimacao();
+                    break;
 				default:
 					System.out.println("Opção inserida inválida. Tente novamente.");
             }
@@ -1292,7 +1314,7 @@ public class GerenciadorMenu {
                     sc.nextLine();
 
                     if (opAdicionarItem == 0) {
-                        System.out.println("Voltando...");
+                        voltandoAnimacao();
                         break;
                     }
 
@@ -1334,7 +1356,7 @@ public class GerenciadorMenu {
                     int opRemoverItem = inserirInt(sc);
 
                     if (opRemoverItem == 0) {
-                        System.out.println("Voltando...");
+                        voltandoAnimacao();
                         break;
                     }
 
@@ -1368,7 +1390,7 @@ public class GerenciadorMenu {
                     }
                     break;
 				case 0:
-					System.out.println("Voltando...");
+                    voltandoAnimacao();
 					break;
                 default:
                     System.out.println("Opção inserida inválida. Tente novamente.");
@@ -1578,7 +1600,7 @@ public class GerenciadorMenu {
                     }
                     break;
 				case 0:
-					System.out.println("Voltando...");
+                    voltandoAnimacao();
 					break;
 				default:
 					System.out.println("Opção inserida inválida. Tente novamente.");
