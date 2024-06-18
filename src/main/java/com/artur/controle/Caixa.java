@@ -18,16 +18,13 @@ public abstract class Caixa implements MetodosPagamento, Listagem {
         this.pedidosPagos = new ArrayList<>();
     }
     
-    public void listarPedidosParaPagar(GerenciadorDePessoas pessoa, GerenciadorCozinha cozinha, int idCliente){
+    public void listarPedidosParaPagar(GerenciadorCozinha cozinha, Long idCliente){
         boolean checar = false;
-        pessoa.listarCliente(); // Método para listar os clientes
-        
-      // Aqui vamos verificar se o ID do cliente fornecido é válido
-        for (Cliente id : pessoa.getListaClientes()) {
-            if (id.getId() == idCliente) {
-                checar = true;
-                break;
-            }
+
+        // Verifica se o ID do cliente fornecido é válido
+        Cliente cliente = GerenciadorDePessoas.getListaClientes().get(idCliente);
+        if (cliente != null) {
+            checar = true;
         }
 
         if (!checar) {
@@ -39,8 +36,8 @@ public abstract class Caixa implements MetodosPagamento, Listagem {
         List<ItemPedido> listaTemp = new ArrayList<>();
 
         // Este Filtra os pedidos prontos da cozinha para enviar ao cliente
-        for(ItemPedido p : cozinha.getPedidosProntos()){
-            if(p.getIdCliente() == idCliente){
+        for (ItemPedido p : cozinha.getPedidosProntos()) {
+            if (p.getIdCliente().equals(idCliente)) {
                 listaTemp.add(p);
             }
         }

@@ -12,11 +12,11 @@ public interface GerenciamentoPessoas {
 
     void adicionarGerente(Gerente gerente);
 
-    void removerCliente(int IdCliente);
+    void removerCliente(Long idCliente);
 
-    void removerGarcom(int IdCarcom);
+    void removerGarcom(Long idCarcom);
 
-    void removerGerente(int IdGerente);
+    void removerGerente(Long idGerente);
     
     void listarCliente();
 

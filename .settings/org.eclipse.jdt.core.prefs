@@ -1,36 +1,17 @@
-// Versão das preferências do Eclipse. Este valor é utilizado para garantir
-// que o arquivo de preferências seja compatível com a versão do Eclipse
-// que o está utilizando.
 eclipse.preferences.version=1
 
-
-// Define a versão do bytecode que o compilador deve gerar.
-// Neste caso, está configurado para gerar bytecode compatível com a versão 17 do Java.
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=17
 
-// Define o nível de conformidade do compilador com a especificação Java.
-// Neste caso, está configurado para seguir a especificação da versão 17 do Java.
 org.eclipse.jdt.core.compiler.compliance=17
 
-// Desabilita a habilitação de recursos de pré-visualização do Java.
-// Recursos de pré-visualização são novos recursos do Java que ainda estão em fase experimental.
 org.eclipse.jdt.core.compiler.problem.enablePreviewFeatures=disabled
 
-// Configura o compilador para gerar avisos em vez de erros ao encontrar referências proibidas.
-// Referências proibidas são usos de APIs ou classes que não são permitidas.
 org.eclipse.jdt.core.compiler.problem.forbiddenReference=warning
 
-// Configura o compilador para ignorar relatórios sobre o uso de recursos de pré-visualização do Java.
 org.eclipse.jdt.core.compiler.problem.reportPreviewFeatures=ignore
 
-// Desabilita o processamento de anotações no compilador.
-// O processamento de anotações é a capacidade do compilador de interpretar e agir sobre anotações encontradas no código.
 org.eclipse.jdt.core.compiler.processAnnotations=disabled
 
-// Desabilita a funcionalidade de especificar uma versão de lançamento específica do Java.
-// Normalmente, isso é usado para garantir que o bytecode gerado seja compatível com uma versão específica da JVM.
 org.eclipse.jdt.core.compiler.release=disabled
 
-// Define o nível de linguagem Java que o compilador deve usar.
-// Neste caso, está configurado para usar os recursos da linguagem disponíveis na versão 17 do Java.
 org.eclipse.jdt.core.compiler.source=17

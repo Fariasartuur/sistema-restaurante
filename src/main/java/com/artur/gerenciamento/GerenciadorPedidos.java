@@ -1,100 +1,89 @@
-package com.artur.gerenciamento; 
-// Declaração do pacote
+package com.artur.gerenciamento;
 
-import com.artur.controle.ItemPedido; // Importação da classe ItemPedido
-import com.artur.interfaces.Listagem; // Importação da interface Listagem
+import com.artur.controle.ItemPedido;
+import com.artur.interfaces.Listagem;
 
+import java.util.*;
 
-import java.util.*; // Importação das classes da biblioteca java.util
-
-// Classe que gerencia os pedidos e implementa a interface Listagem
 public class GerenciadorPedidos implements Listagem {
 
-    private static int contadorPedidos = 0; // Variável estática para contar o número de pedidos
-    private final Set<ItemPedido> listaPedidos; // Conjunto de pedidos (TreeSet para manter a ordem)
+    // Comparator para ordenar os pedidos primeiro pelo nome do pedido e depois pelo ID do cliente
+    static Comparator<ItemPedido> comparator = Comparator.comparing(ItemPedido::getNomePedido).thenComparing(ItemPedido::getIdCliente);
 
+    // Variável estática para contar o número de pedidos
+    private static Long contadorPedidos = 0L;
 
-    // Construtor da classe
-    public GerenciadorPedidos() {
- // Comparator para ordenar os pedidos primeiro pelo nome do pedido e depois pelo ID do cliente
-        Comparator<ItemPedido> comparator = Comparator
-                .comparing(ItemPedido::getNomePedido)
-                .thenComparing(ItemPedido::getIdCliente);
+    // Inicializa o conjunto de pedidos com o comparator
+    private static final Map<Long, Set<ItemPedido>> listaPedidos = new TreeMap<>();; // Conjunto de pedidos (TreeSet para manter a ordem)
 
-        listaPedidos = new TreeSet<>(comparator); // Inicializa o conjunto de pedidos com o comparator
-        GerenciadorCardapio gerenciarCardapio = new GerenciadorCardapio(); // Cria uma instância de GerenciadorCardapio
-        gerenciarCardapio.gerarItems(); // Gera itens do cardápio 
-    }
 
     // Método para adicionar um item ao pedido
     public void adicionarItem(ItemPedido item) {
-        boolean itemExistente = false; // Flag para verificar se o item já existe na lista
-        System.out.println(item.getId() + " - 1");
+        // Obtém ou cria um novo conjunto de pedidos para o ID do cliente
+        Set<ItemPedido> pedidosCliente = listaPedidos.computeIfAbsent(item.getIdCliente(), k -> new TreeSet<>(comparator));
 
-        for (ItemPedido i : listaPedidos) {
+        boolean itemExistente = false; // Flag para verificar se o item já existe na lista
+
+        for (ItemPedido i : pedidosCliente) {
             // Verifica se o item já existe na lista e pertence ao mesmo cliente
-            if (item.getIdItemCardapio() == i.getIdItemCardapio() && item.getIdCliente() == i.getIdCliente()) {
-                System.out.println(item.getId() + " - 000");
-                System.out.println(i.getId() + " - 2");
+            if (Objects.equals(item.getIdItemCardapio(), i.getIdItemCardapio())) {
                 i.setQuantidade(i.getQuantidade() + item.getQuantidade());
-                System.out.println(i.getId() + " - 3");
                 itemExistente = true;
                 break;
             }
         }
 
-
-        if (itemExistente) {
-            return; // Se o item já existe, sai do método
+        if (!itemExistente) {
+            // Se o item não existir na lista para o mesmo cliente, adiciona um novo item
+            contadorPedidos++;
+            item.setIdPedido(contadorPedidos); // Define o ID do pedido
+            pedidosCliente.add(item); // Adiciona o item ao conjunto de pedidos do cliente
         }
-
-        // Se o item não existir na lista para o mesmo cliente, adiciona um novo item
-        contadorPedidos++;
-        item.setIdPedido(contadorPedidos); // Define o ID do pedido
-        listaPedidos.add(item); // Adiciona o item à lista
-        System.out.println(item.getId() + " - 4");
     }
 
     // Método para remover um item do pedido
-    public void removerItem(int idItem) {
-        ItemPedido itemRemovido = null; // Variável para armazenar o item a ser removido
-        for (ItemPedido item : listaPedidos) {
-            if (item.getId() == idItem) {
-                itemRemovido = item; // Encontra o item a ser removido
-                break;
+    public void removerItem(Long idItem) {
+        // Itera sobre todos os conjuntos de pedidos para encontrar e remover o item
+        for (Set<ItemPedido> pedidosCliente : listaPedidos.values()) {
+            ItemPedido itemRemovido = null; // Variável para armazenar o item a ser removido
+            for (ItemPedido item : pedidosCliente) {
+                if (Objects.equals(item.getId(), idItem)) {
+                    itemRemovido = item; // Encontra o item a ser removido
+                    break;
+                }
+            }
+
+            if (itemRemovido != null) {
+                pedidosCliente.remove(itemRemovido); // Remove o item do conjunto de pedidos
+                contadorPedidos--; // Decrementa o contador de pedidos
+                System.out.println("Item removido com sucesso.");
+                return; // Sai do método após remover o item
             }
         }
 
-        if (itemRemovido != null) {
-            listaPedidos.remove(itemRemovido); // Remove o item da lista
-            contadorPedidos--;  // Decrementa o contador de pedidos
-            System.out.println("Item removido com sucesso.");
-        }
-
-         // Atualiza os IDs dos pedidos restantes
-        int novoId = 1;
-        for (ItemPedido p : listaPedidos) {
-            p.setIdPedido(novoId++);
-        }
+        System.out.println("Item não encontrado.");
     }
 
+    // Lista todos os pedidos
     @Override
-   
     public void listar() {
-         // Lista todos os pedidos
         if (listaPedidos.isEmpty()) {
             System.out.println("Nenhum pedido realizado.");
         } else {
-            for (ItemPedido pedido : listaPedidos) {
-                System.out.println("ID: " + pedido.getId() + " | Nome do pedido: " + pedido.getNomePedido() +
-                        " | Quantidade: " + pedido.getQuantidade() + " | Preco: " + pedido.getPrecoPedido() +
-                        " | ID e Cliente: " + pedido.getIdCliente() + " - " + pedido.getNomeCliente());
+            for (Map.Entry<Long, Set<ItemPedido>> entry : listaPedidos.entrySet()) {
+                Long idCliente = entry.getKey();
+                Set<ItemPedido> pedidosCliente = entry.getValue();
+                for (ItemPedido pedido : pedidosCliente) {
+                    System.out.println("ID Cliente: " + idCliente + " | ID Pedido: " + pedido.getId() +
+                            " | Nome do pedido: " + pedido.getNomePedido() + " | Quantidade: " + pedido.getQuantidade() +
+                            " | Preço: " + pedido.getPrecoPedido() + " | ID do Item de Cardápio: " + pedido.getIdItemCardapio());
+                }
             }
         }
     }
-    
-    // Método para obter a lista de pedidos
-    public Set<ItemPedido> getListaPedidos() {
+
+    // Método para obter o mapa de pedidos
+    public Map<Long, Set<ItemPedido>> getListaPedidos() {
         return listaPedidos;
     }
 }

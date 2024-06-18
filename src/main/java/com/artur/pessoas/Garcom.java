@@ -5,11 +5,11 @@ import java.time.format.DateTimeFormatter;
 
 import com.artur.interfaces.Identificacao;
 
-public class Garcom extends Pessoa implements Identificacao {
+public class Garcom extends Pessoa implements Identificacao{
 
-    private String dataContratacao;
+    private final String dataContratacao;
     private float salario;
-    private int idGarcom;
+    private Long idGarcom;
     private boolean ocupado;
 
     public Garcom(String nome, String endereco, String telefone, float salario) {
@@ -22,11 +22,6 @@ public class Garcom extends Pessoa implements Identificacao {
         this.dataContratacao = dataFormatada;
     }
 
-    public Garcom(String nome,int idGarcom){
-        super(nome);
-        this.idGarcom = idGarcom;
-    }
-
     public float getSalario() {
         return salario;
     }
@@ -36,7 +31,7 @@ public class Garcom extends Pessoa implements Identificacao {
     }
 
     @Override
-    public int getId() {
+    public Long getId() {
         return idGarcom;
     }
 
@@ -44,7 +39,7 @@ public class Garcom extends Pessoa implements Identificacao {
         this.salario = salario;
     }
 
-    public void setIdGarcom(int idGarcom) {
+    public void setIdGarcom(Long idGarcom) {
         this.idGarcom = idGarcom;
     }
 

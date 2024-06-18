@@ -1,9 +1,2 @@
-// Versão das preferências do Eclipse. Este valor é utilizado para garantir
-// que o arquivo de preferências seja compatível com a versão do Eclipse
-// que o está utilizando.
 eclipse.preferences.version=1
-
-// Configuração do Eclipse que indica que encodings derivados (códigos de
-// caracteres) devem ser separados. Isso pode ser útil para projetos que 
-// trabalham com diferentes encodings para arquivos fonte e recursos.
 separateDerivedEncodings=true

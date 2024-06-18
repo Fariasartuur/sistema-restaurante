@@ -1,11 +1,2 @@
-// Versão das preferências do Eclipse. Este valor é utilizado para garantir
-// que o arquivo de preferências seja compatível com a versão do Eclipse
-// que o está utilizando.
 eclipse.preferences.version=1
-
-// Configuração do Eclipse relacionada à Anotação de Processamento de Ferramentas (APT).
-// Quando 'aptEnabled' está definido como 'false', isso significa que o Eclipse não 
-// executará processadores de anotação automaticamente durante a compilação do projeto.
-// Essa configuração é útil se você não estiver utilizando processadores de anotação
-// ou deseja desabilitar esse comportamento para melhorar o desempenho da compilação.
 org.eclipse.jdt.apt.aptEnabled=false

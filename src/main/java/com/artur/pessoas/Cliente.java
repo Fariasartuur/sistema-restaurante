@@ -2,10 +2,10 @@ package com.artur.pessoas;
 
 import com.artur.interfaces.Identificacao;
 
-public class Cliente extends Pessoa implements Identificacao {
+public class Cliente extends Pessoa implements Identificacao{
 
     private String dataNasc;
-    private int idCliente;
+    private Long idCliente;
 
     public Cliente(String nome, String endereco, String telefone, String dataNasc) {
         super(nome, endereco, telefone);
@@ -13,7 +13,7 @@ public class Cliente extends Pessoa implements Identificacao {
     }
 
     @Override
-    public int getId() {
+    public Long getId() {
         return idCliente;
     }
 
@@ -25,12 +25,9 @@ public class Cliente extends Pessoa implements Identificacao {
         this.dataNasc = dataNasc;
     }
 
-    public void setIdCliente(int idCliente) {
+    public void setIdCliente(Long idCliente) {
         this.idCliente = idCliente;
     }
-
-
-
 
 
 }

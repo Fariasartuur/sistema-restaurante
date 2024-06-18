@@ -2,9 +2,9 @@ package com.artur.pessoas;
 
 import com.artur.interfaces.Identificacao;
 
-public class Gerente extends Pessoa implements Identificacao {
+public class Gerente extends Pessoa implements Identificacao{
 
-    private int idGerente;
+    private Long idGerente;
     private float salario;
     private static Gerente gerenteAtual;
 
@@ -14,11 +14,11 @@ public class Gerente extends Pessoa implements Identificacao {
     }
 
     @Override
-    public int getId() {
+    public Long getId() {
         return idGerente;
     }
 
-    public void setIdGerente(int idGerente) {
+    public void setIdGerente(Long idGerente) {
         this.idGerente = idGerente;
     }
 

@@ -7,16 +7,15 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.artur.controle.ItemCardapio; // Importa a classe ItemCardapio do pacote com.artur.controle
-import com.artur.interfaces.Listagem;// Importa a interface Listagem do pacote com.artur.interfaces
+import com.artur.controle.ItemCardapio;
+import com.artur.interfaces.Listagem;
 
 import java.util.List;
 
-// Declaração da classe GerenciadorCardapio que implementa a interface Listagem
 public class GerenciadorCardapio implements Listagem {
 
     private final Map<String, List<ItemCardapio>> cardapio; // Mapa que armazena os itens do cardápio por categoria
-    private int IdGlobal = 1; // Contador global para atribuir IDs únicos aos itens do cardápio
+    private static Long IdGlobal = 1L; // Contador global para atribuir IDs únicos aos itens do cardápio
 
 
     // Construtor da classe
@@ -25,8 +24,8 @@ public class GerenciadorCardapio implements Listagem {
         gerarItems(); // Chama o método para gerar os itens do cardápio
     }
 
-    // Método protegido para gerar itens do cardápio
-    protected void gerarItems() {
+    // Método privado para gerar itens do cardápio
+    private void gerarItems() {
 
          // Inicializa as categorias no mapa do cardápio
         cardapio.put("Pratos Principais", new ArrayList<>());
@@ -74,22 +73,29 @@ public class GerenciadorCardapio implements Listagem {
         };
 
     }
-    
-    // Método privado para obter o ID mais alto de uma categoria específica
-    private int obterIdMaisAltoCategoria(String categoria, List<ItemCardapio> itensCategoria) {
-        int idMaisAlto = 0;
 
-        // Verifica se a categoria existe no mapa
-        if (itensCategoria != null) {
-            // Percorre os itens da categoria para encontrar o ID mais alto
+    // Método privado para obter o ID mais alto de uma categoria específica
+    private Long obterIdMaisAltoCategoria(String categoria, List<ItemCardapio> itensCategoria) {
+        Long idMaisAlto = null;
+
+        // Verifica se a lista de itens da categoria não é nula e não está vazia
+        if (itensCategoria != null && !itensCategoria.isEmpty()) {
+            // Inicializa idMaisAlto com o primeiro ID válido da categoria
             for (ItemCardapio item : itensCategoria) {
                 if (item.getCategoria().equals(categoria)) {
-                    if (item.getId() > idMaisAlto) {
-                        idMaisAlto = item.getId();
-                    }
+                    idMaisAlto = item.getId(); // Define o primeiro ID como o mais alto inicialmente
+                    break;
                 }
-
             }
+
+            // Percorre os itens da categoria para encontrar o ID mais alto
+            for (ItemCardapio item : itensCategoria) {
+                if (item.getCategoria().equals(categoria) && item.getId() > idMaisAlto) {
+                    idMaisAlto = item.getId(); // Atualiza o ID mais alto encontrado
+                }
+            }
+        } else{
+            return null;
         }
 
         return idMaisAlto;
@@ -98,7 +104,7 @@ public class GerenciadorCardapio implements Listagem {
     // Método público para adicionar um item ao cardápio
     public void adicionarItem(String categoria, ItemCardapio item) {
 
-        int idAlto = 1;
+        Long idAlto;
 
         // Obtém a categoria anterior e a lista de itens da categoria anterior
         String catAnterior = Categoria(categoria);
@@ -108,10 +114,15 @@ public class GerenciadorCardapio implements Listagem {
         
           // Define o ID do item baseado na categoria
         if (categoria.equals("Pratos Principais")) {
-            item.setIdItem(this.IdGlobal++);
+            IdGlobal++;
+            item.setIdItem(IdGlobal);
         } else {
             idAlto = obterIdMaisAltoCategoria(catAnterior, itensCatAnterior);
-            item.setIdItem(idAlto + 1);
+            if(idAlto == null){
+                System.out.println("Erro, categoria vazia.");
+            } else{
+                item.setIdItem(idAlto + 1);
+            }
         }
 
         // Adiciona o item à lista da categoria
@@ -120,7 +131,7 @@ public class GerenciadorCardapio implements Listagem {
         }
 
         // Reorganiza os IDs dos itens no cardápio
-        int novoId = 1;
+        Long novoId = 1L;
         for (Map.Entry<String, List<ItemCardapio>> entry : cardapio.entrySet()) {
             for (ItemCardapio itemCategoria : entry.getValue()) {
                 itemCategoria.setIdItem(novoId++);
@@ -152,7 +163,7 @@ public class GerenciadorCardapio implements Listagem {
                 itensCategoria.remove(itemRemovido);
                 System.out.println("Item removido com sucesso.");
 
-                int novoId = 1;
+                Long novoId = 1L;
                 for (Map.Entry<String, List<ItemCardapio>> entry : cardapio.entrySet()) {
                     for (ItemCardapio itemCategoria : entry.getValue()) {
                         itemCategoria.setIdItem(novoId++);

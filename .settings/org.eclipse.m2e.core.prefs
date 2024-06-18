@@ -1,12 +1,7 @@
-// Define os perfis ativos para o projeto. Neste caso, não há nenhum perfil ativo.
 activeProfiles=
 
-// Indica a versão do formato de preferências do Eclipse sendo usado. Versão 1 é a primeira versão desse formato.
 eclipse.preferences.version=1
 
-// Determina se o Eclipse deve resolver automaticamente os projetos no espaço de trabalho.
-// Quando definido como 'true', o Eclipse tentará resolver automaticamente os projetos necessários no espaço de trabalho.
 resolveWorkspaceProjects=true
 
-// Tag de versão associada ao arquivo de configuração. O propósito específico dessa linha não está claro sem contexto adicional.
 version=1

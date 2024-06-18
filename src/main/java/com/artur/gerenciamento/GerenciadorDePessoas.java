@@ -1,32 +1,31 @@
-package com.artur.gerenciamento;  // Declaração do pacote
+package com.artur.gerenciamento;
 
-import java.util.ArrayList;  // Importação da classe ArrayList 
-import com.artur.interfaces.GerenciamentoPessoas; // Importação da interface GerenciamentoPessoas
-import com.artur.pessoas.*; // Importação de todas as classes do pacote com.artur.pessoas
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-// Classe que implementa a interface GerenciamentoPessoas para gerenciar clientes, garçons e gerentes.
+import com.artur.interfaces.GerenciamentoPessoas;
+import com.artur.pessoas.*;
+
+
 
 public class GerenciadorDePessoas implements GerenciamentoPessoas {
 
     // Listas para armazenar clientes, garçons e gerentes.
-    private final ArrayList<Cliente> listaClientes;
-    private final ArrayList<Garcom> listaGarcom;
-    private final ArrayList<Gerente> listaGerente;
+    private static final Map<Long, Cliente> listaClientes = new LinkedHashMap<>();
+    private static final Map<Long, Garcom> listaGarcom = new LinkedHashMap<>();
+    private static final Map<Long, Gerente> listaGerente = new LinkedHashMap<>();
 
      // Variáveis estáticas para gerar IDs únicos para clientes, garçons e gerentes.
-    private static int ultimoIdCliente = 0;
-    protected static int ultimoIdGarcom = 0;
-    private static int ultimoIdGerente = 0;
+    private static Long countIdCliente = 0L;
+    private static Long countIdGarcom = 0L;
+    private static Long countIdGerente = 0L;
 
-    
+
     // Construtor que inicializa as listas e gera garçons.
     public GerenciadorDePessoas() {
-        this.listaClientes = new ArrayList<>();
-        this.listaGarcom = new ArrayList<>();
-        this.listaGerente = new ArrayList<>();
         gerarGarcom();
     }
-
 
     // Método para gerar garçons pré-definidos.
     public void gerarGarcom() {
@@ -40,79 +39,92 @@ public class GerenciadorDePessoas implements GerenciamentoPessoas {
     @Override
     public void adicionarCliente(Cliente cliente) {
         // Define o id do cliente e o adiciona a lista de cliente
-        ultimoIdCliente++;
-        cliente.setIdCliente(ultimoIdCliente);
-        listaClientes.add(cliente);
-
+        countIdCliente++;
+        cliente.setIdCliente(countIdCliente);
+        listaClientes.put(cliente.getId(), cliente);
     }
 
     @Override
-    public void removerCliente(int IdCliente) {
+    public void removerCliente(Long idCliente) {
+        Cliente clienteRemover = listaClientes.get(idCliente);
 
         // Verifica se o id do cliente existe e o remove
-        for(Cliente c : listaClientes){
-            if(c.getId() == IdCliente){
-                listaClientes.remove(c);
-                ultimoIdCliente--;
-                System.out.println("Cliente removido com sucesso.");
-                break;
+        if(clienteRemover != null){
+            listaClientes.remove(idCliente);
+            System.out.println("Cliente removido com sucesso.");
+
+            // Atualiza os IDs da lista
+            Long novoId = 1L;
+            Map<Long, Cliente> novoMapClientes = new LinkedHashMap<>();
+
+            for (Cliente cliente : listaClientes.values()) {
+                cliente.setIdCliente(novoId);
+                novoMapClientes.put(novoId, cliente);
+                novoId++;
             }
+
+            // Substitui o antigo mapa com IDs reorganizados
+            listaClientes.clear();
+            listaClientes.putAll(novoMapClientes);
+
+            // Atualiza o contador de IDs
+            countIdCliente = novoId;
+        } else{
+            System.out.println("Cliente não encontrado.");
         }
 
-        // Atualiza os ids da lista
-        for (int i = 0; i < listaClientes.size(); i++) {
-            listaClientes.get(i).setIdCliente(i + 1);
-        }
-
-        // Se a lista estiver vazia, garante que o ultimoIdCliente seja 0
-        if (listaClientes.isEmpty()) {
-            ultimoIdCliente = 0;
-        }
     }
 
     @Override
     public void listarCliente() {
-        for (Cliente cliente : listaClientes) {
+        for (Cliente cliente : listaClientes.values()) {
             System.out.println("ID: " + cliente.getId() + " | Nome: " + cliente.getNome() + " | Endereco: " + cliente.getEndereco() + " | Telefone: " + cliente.getTelefone() + " | Data de Nascimento: " + cliente.getDataNasc());
-
         }
     }
 
     @Override
     public void adicionarGarcom(Garcom garcom) {
         // Define o id do garçom e o adiciona a lista de garçons
-        ultimoIdGarcom++;
-        garcom.setIdGarcom(ultimoIdGarcom);
-        listaGarcom.add(garcom);
+        countIdGarcom++;
+        garcom.setIdGarcom(countIdGarcom);
+        listaGarcom.put(garcom.getId(), garcom);
     }
 
     @Override
-    public void removerGarcom(int IdGarcom) {
+    public void removerGarcom(Long idCarcom) {
+        Garcom garcomRemover = listaGarcom.get(idCarcom);
+
         // Verifica se o id do garçom existe e o remove
-        for(Garcom g : listaGarcom){
-            if (g.getId() == IdGarcom) {
-                listaGarcom.remove(g);
-                ultimoIdGarcom--;
-                System.out.println("Garçom removido com sucesso.");
-                break;
+        if(garcomRemover != null){
+            listaGarcom.remove(idCarcom);
+            System.out.println("Garçom removido com sucesso.");
+
+            // Atualiza os IDs da lista
+            Long novoId = 1L;
+            Map<Long, Garcom> novoMapGarcom = new LinkedHashMap<>();
+
+            for(Garcom garcom : listaGarcom.values()){
+                garcom.setIdGarcom(novoId);
+                novoMapGarcom.put(novoId, garcom);
+                novoId++;
             }
+
+            // Substitui o antigo mapa com IDs reorganizados
+            listaGarcom.clear();
+            listaGarcom.putAll(novoMapGarcom);
+
+            // Atualiza o contador de IDs
+            countIdGarcom = novoId;
+        } else{
+            System.out.println("Garçom não encontrado.");
         }
 
-        // Atualiza os ids da lista
-        for (int i = 0; i < listaGarcom.size(); i++) {
-            listaGarcom.get(i).setIdGarcom(i + 1);
-        }
-
-        // Se a lista estiver vazia, garante que o ultimoIdGarcom seja 0
-        if (listaGarcom.isEmpty()) {
-            ultimoIdGarcom = 0;
-        }
     }
 
     @Override
     public void listarGarcom() {
 
-        for (Garcom garcom : listaGarcom) {
+        for (Garcom garcom : listaGarcom.values()) {
             System.out.print("ID: " + garcom.getId() + " | Nome: " + garcom.getNome() + " | Endereco: " + garcom.getEndereco() + " | Telefone: " + garcom.getTelefone() + " | Salario: " + garcom.getSalario() + " | Data de Contratacao: " + garcom.getDataContratacao());
             if (garcom.isOcupado()) {
                 System.out.println(" | (Ocupado) ");
@@ -126,9 +138,10 @@ public class GerenciadorDePessoas implements GerenciamentoPessoas {
     public void adicionarGerente(Gerente gerente) {
         // Adiciona um gerente se não houver nenhum atualmente.
         if (Gerente.getGerenteAtual() == null) { // Se não existir um gerente, adiciona um.
-            gerente.setIdGerente(++ultimoIdGerente);
-            listaGerente.add(gerente);
+            countIdGerente++;
+            gerente.setIdGerente(++countIdGerente);
             Gerente.setGerenteAtual(gerente);
+            listaGerente.put(gerente.getId(), gerente);
             System.out.println("Gerente adicionado com sucesso.");
         } else {
             System.out.println("Já existe um gerente no restaurante.");
@@ -136,17 +149,19 @@ public class GerenciadorDePessoas implements GerenciamentoPessoas {
     }
 
     @Override
-    public void removerGerente(int IdGerente) {
+    public void removerGerente(Long idGerente) {
+        Gerente gerenteRemover = listaGerente.get(idGerente);
+
   // Remove o gerente se o id fornecido corresponder ao id do gerente.
-        for (Gerente gerente : listaGerente) {
-            if (gerente.getId() == IdGerente) {
-                listaGerente.remove(gerente);
-                Gerente.setGerenteAtual(null);
-                System.out.println("Gerente removido com sucesso.");
-                return;
-            }
+        if(gerenteRemover != null){
+            listaGerente.remove(idGerente);
+            Gerente.setGerenteAtual(null);
+            System.out.println("Gerente removido com sucesso.");
+        } else{
+            System.out.println("Gerente não encontrado com o ID fornecido.");
         }
-        System.out.println("Gerente não encontrado com o ID fornecido.");
+
+
     }
 
     @Override
@@ -161,17 +176,12 @@ public class GerenciadorDePessoas implements GerenciamentoPessoas {
     }
 
    // Métodos para obter as listas de clientes, garçons e gerentes.
-    public ArrayList<Cliente> getListaClientes() {
-        return listaClientes;
-    }
 
-    public ArrayList<Garcom> getListaGarcom() {
-        return listaGarcom;
-    }
 
-    public ArrayList<Gerente> getListaGerente() {
-        return listaGerente;
-    }
+    public static Map<Long, Cliente> getListaClientes() { return listaClientes; }
 
+    public static Map<Long, Garcom> getListaGarcom() { return listaGarcom; }
+
+    public static Map<Long, Gerente> getListaGerente() { return listaGerente; }
 
 }

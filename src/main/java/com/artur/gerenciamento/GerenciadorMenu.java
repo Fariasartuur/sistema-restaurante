@@ -1,16 +1,13 @@
 package com.artur.gerenciamento;
-
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+//  itemcardapio
+import java.util.*;
 
 import com.artur.controle.*;
 import com.artur.pessoas.Cliente;
 import com.artur.pessoas.Garcom;
 import com.artur.pessoas.Gerente;
 
-//OBS: as funções inserirInt, inserirDouble e inserirFloat, são funções que pega a entrada do usuário verifica se é um int ou double e retorna ela, se não for ele pede
+//OBS: as funções inserirInt, inserirDouble, inserirLong e inserirFloat, são funções que pega a entrada do usuário verifica se é um int ou double e retorna ela, se não for ele pede
 //que o usuário insira de novo até acertar (essas funções evitam que o config pare se um valor diferente do que é requisitado seja inserido).
 
 public class GerenciadorMenu {
@@ -29,10 +26,11 @@ public class GerenciadorMenu {
         this.cozinha = new GerenciadorCozinha();
         this.cardapio = new GerenciadorCardapio();
         this.restaurante = new Restaurante();
+        this.pessoa = new GerenciadorDePessoas();
         this.mesa = new GerenciadorMesas();
         this.reserva = new GerenciadorReservas();
-        this.pessoa = new GerenciadorDePessoas();
         this.caixa = new Pagamento();
+        mesa.criarMesa();
         pessoa.adicionarCliente(new Cliente("Artur", "Jardins", "1234-5678", "06-06-2004"));
     }
 
@@ -60,6 +58,23 @@ public class GerenciadorMenu {
         while (!valido) {
             try {
                 num = scanner.nextFloat();
+                valido = true;
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada invalida. Por favor, digite um numero valido");
+                scanner.next();
+            }
+        }
+
+        return num;
+    }
+
+    public Long inserirLong(Scanner scanner){
+        Long num = null;
+        boolean valido = false;
+
+        while (!valido) {
+            try {
+                num = scanner.nextLong();
                 valido = true;
             } catch (InputMismatchException e) {
                 System.out.println("Entrada invalida. Por favor, digite um numero valido");
@@ -115,7 +130,7 @@ public class GerenciadorMenu {
 
             switch (opcao1) {
                 case 1:
-                    if (pessoa.getListaClientes().isEmpty()) {
+                    if (GerenciadorDePessoas.getListaClientes().isEmpty()) {
                         System.out.println("Nenhum Cliente Encontrado. Deseja cadastrar um Cliente? (1)Sim/(2)Nao");
                         int opcaoCliRe = inserirInt(sc);
                         sc.nextLine();
@@ -141,7 +156,7 @@ public class GerenciadorMenu {
                     break;
                 case 0:
                     System.out.println("Voltando...");
-                    break;
+                    return;
                 default:
                     System.out.println("Opcao inserida invalida. Tente Novamente.");
 
@@ -190,7 +205,7 @@ public class GerenciadorMenu {
                                 + restaurante.getNOME_RESTAURANTE() + "!");
                         caixa.getPedidosPagos().addAll(cozinha.getPedidosProntos());
                         Cliente finalCliente = cliente;
-                        cozinha.getPedidosProntos().removeIf(pedido -> pedido.getIdCliente() == finalCliente.getId());
+                        cozinha.getPedidosProntos().removeIf(pedido -> Objects.equals(pedido.getIdCliente(), finalCliente.getId()));
 
                         opcao = false;
                     }
@@ -261,7 +276,7 @@ public class GerenciadorMenu {
     public ItemPedido FazerPedido(Cliente cliente, Scanner sc, String categoria) {
         ItemPedido novoPedido = null;
         int quantidade;
-        int idItem;
+        Long idItem;
 
         List<ItemCardapio> itens = cardapio.getCardapio().get(categoria);
 
@@ -280,11 +295,11 @@ public class GerenciadorMenu {
         }
 
         System.out.println("Digite o ID do item:");
-        idItem = inserirInt(sc);
+        idItem = inserirLong(sc);
 
         boolean encontrado = false;
         for (ItemCardapio item : itens) {
-            if (item.getId() == idItem) {
+            if (Objects.equals(item.getId(), idItem)) {
                 encontrado = true;
                 System.out.println("Digite a quantidade:");
                 quantidade = inserirInt(sc);
@@ -422,12 +437,12 @@ public class GerenciadorMenu {
                     List<ItemPedido> listaPedidos = new ArrayList<>();
 
                     System.out.println("Insira o ID do cliente: ");
-                    int idCliente = inserirInt(sc);
+                    Long idCliente = inserirLong(sc);
                     sc.nextLine();
 
                     if (!cozinha.getPedidosProntos().isEmpty()) {
                         for (ItemPedido p : cozinha.getPedidosProntos()) {
-                            if (p.getIdCliente() == idCliente) {
+                            if (Objects.equals(p.getIdCliente(), idCliente)) {
                                 listaPedidos.add(p);
                                 break;
                             }
@@ -437,10 +452,10 @@ public class GerenciadorMenu {
                     }
 
                     if (!listaPedidos.isEmpty()) {
-                        caixa.listarPedidosParaPagar(pessoa, cozinha, idCliente);
+                        caixa.listarPedidosParaPagar(cozinha, idCliente);
                         caixa.fazerPagamento(sc);
                         caixa.getPedidosPagos().addAll(cozinha.getPedidosProntos());
-                        cozinha.getPedidosProntos().removeIf(p -> p.getIdCliente() == idCliente);
+                        cozinha.getPedidosProntos().removeIf(p -> Objects.equals(p.getIdCliente(), idCliente));
                     }
 
                     break;
@@ -465,7 +480,7 @@ public class GerenciadorMenu {
     // Sub Menu Pagamentos
 
     public void subMenuPagamentos(Scanner sc, Cliente cliente) {
-        caixa.listarPedidosParaPagar(pessoa, cozinha, cliente.getId());
+        caixa.listarPedidosParaPagar(cozinha, cliente.getId());
         caixa.fazerPagamento(sc);
     }
 
@@ -473,7 +488,6 @@ public class GerenciadorMenu {
 
     public void menuReservas(Scanner sc) {
         int opcaoReserva;
-        int temp;
 
         do {
             System.out.println("========== RESERVAS ==========");
@@ -490,7 +504,7 @@ public class GerenciadorMenu {
                 case 1:
                     // Listar Reservas
 
-                    if (reserva.getListaReservas().isEmpty()) {
+                    if (GerenciadorReservas.getListaReservas().isEmpty()) {
                         System.out.println("Nenhuma reserva registrada.");
                     } else {
                         reserva.listar();
@@ -499,7 +513,7 @@ public class GerenciadorMenu {
                 case 2:
                     // Fazer Reserva
 
-                    if (pessoa.getListaClientes().isEmpty()) {
+                    if (GerenciadorDePessoas.getListaClientes().isEmpty()) {
                         System.out.println("Nenhum Cliente Encontrado. Deseja cadastrar um Cliente? (1)Sim/(2)Nao");
                         int opcaoCliRe = inserirInt(sc);
 
@@ -523,7 +537,7 @@ public class GerenciadorMenu {
 
                     break;
                 case 3:
-                    if (reserva.getListaReservas().isEmpty()) {
+                    if (GerenciadorReservas.getListaReservas().isEmpty()) {
                         System.out.println("Nenhuma Reserva Registrada");
                         break;
                     }
@@ -531,20 +545,13 @@ public class GerenciadorMenu {
                     System.out.println("========== Cancelar Reserva ==========");
                     reserva.listar();
 
-                    System.out.println("\nInsira o ID da reserva ou digite (0) para voltar: ");
-                    int canIdReserva = inserirInt(sc);
+                    System.out.println("\nInsira o ID da reserva: ");
+                    Long canIdReserva = inserirLong(sc);
 
-                    if (canIdReserva == 0) {
-                        System.out.println("Voltando...");
-                        break;
-                    }
-
-                    reserva.cancelarReserva(canIdReserva, mesa.getListaMesas(), pessoa.getListaGarcom());
+                    reserva.cancelarReserva(canIdReserva, GerenciadorMesas.getListaMesas(), GerenciadorDePessoas.getListaGarcom());
                     break;
                 case 4:
-                    temp = 0;
-
-                    if (reserva.getListaReservas().isEmpty()) {
+                    if (GerenciadorReservas.getListaReservas().isEmpty()) {
                         System.out.println("Nenhuma Reserva Registrada");
                         break;
                     }
@@ -552,23 +559,12 @@ public class GerenciadorMenu {
                     System.out.println("========== Modificar Reseva ==========");
                     reserva.listar();
 
-                    System.out.println("\nInsira o ID da Reserva ou digite (0) para voltar: ");
-                    int modIdReserva = inserirInt(sc);
+                    System.out.println("\nInsira o ID da Reserva: ");
+                    Long modIdReserva = inserirLong(sc);
 
-                    if (modIdReserva == 0) {
-                        System.out.println("Voltando...");
-                        break;
-                    }
+                    Reserva novaReserva = GerenciadorReservas.getListaReservas().get(modIdReserva);
 
-                    Reserva novaReserva = null;
-                    for (Reserva r : reserva.getListaReservas()) {
-                        if (modIdReserva == r.getId()) {
-                            temp = temp + 1;
-                            novaReserva = r;
-                        }
-                    }
-
-                    if (temp == 0) {
+                    if(novaReserva == null){
                         System.out.println("ID INVALIDO OU NAO ENCONTRADO.");
                         break;
                     }
@@ -582,15 +578,15 @@ public class GerenciadorMenu {
                     switch (modOpcao) {
                         case 1:
                             mesa.listar();
-                            int mesaTemp = 0;
+                            Long mesaTemp = 0L;
 
                             System.out.print("Insira o numero da nova mesa: ");
-                            int novaMesaNum = inserirInt(sc);
+                            Long novaMesaNum = inserirLong(sc);
 
                             // Liberar a mesa anterior
                             Mesa mesaAtual = null;
-                            for (Mesa mesinha : mesa.getListaMesas()) {
-                                if (mesinha.getId() == novaReserva.getNumMesa()) {
+                            for (Mesa mesinha : GerenciadorMesas.getListaMesas().values()) {
+                                if (Objects.equals(mesinha.getId(), novaReserva.getIdMesa())) {
                                     mesaTemp = mesinha.getId();
                                     mesaAtual = mesinha;
                                     break;
@@ -603,8 +599,8 @@ public class GerenciadorMenu {
 
                             // Verificar se a nova mesa está disponível
                             Mesa mesaNova = null;
-                            for (Mesa mesinha : mesa.getListaMesas()) {
-                                if (mesinha.getId() == novaMesaNum) {
+                            for (Mesa mesinha : GerenciadorMesas.getListaMesas().values()) {
+                                if (Objects.equals(mesinha.getId(), novaMesaNum)) {
                                     if (mesinha.isStatusMesa()) {
                                         System.out.println("A nova mesa está ocupada. Tente novamente.");
                                         if (mesaAtual != null) {
@@ -618,7 +614,7 @@ public class GerenciadorMenu {
                             }
 
                             if (mesaNova != null) {
-                                novaReserva.setNumMesa(mesaNova.getId());
+                                novaReserva.setIdMesa(mesaNova.getId());
                                 mesaNova.setStatusMesa(true);
                                 System.out.println("Mesa " + mesaTemp + " alterada com sucesso para mesa " + mesaNova.getId());
                             } else {
@@ -699,19 +695,15 @@ public class GerenciadorMenu {
 
         System.out.println("\n========== Fazer Reserva ==========");
         System.out.println("Digite o id do cliente ou digite (0) para voltar: ");
-        int idCliente = inserirInt(sc);
+        Long idCliente = inserirLong(sc);
 
         if (idCliente == 0) {
             System.out.println("Voltando...");
             return false;
         }
 
-        Cliente clienteSelec = null;
-        for (Cliente id : pessoa.getListaClientes()) {
-            if (id.getId() == idCliente) {
-                clienteSelec = id;
-            }
-        }
+        // Buscar o cliente diretamente no Map
+        Cliente clienteSelec = GerenciadorDePessoas.getListaClientes().get(idCliente);
 
         if (clienteSelec == null) {
             System.out.println("ID DE CLIENTE INVALIDO.");
@@ -719,12 +711,12 @@ public class GerenciadorMenu {
         }
 
         System.out.println("Digite o numero da mesa: ");
-        int numMesa = inserirInt(sc);
+        Long idMesa = inserirLong(sc);
         sc.nextLine();
 
         Mesa mesaSelec = null;
-        for (Mesa mesinha : mesa.getListaMesas()) {
-            if (numMesa == mesinha.getId() && !mesinha.isStatusMesa()) {
+        for (Mesa mesinha : GerenciadorMesas.getListaMesas().values()) {
+            if (Objects.equals(idMesa, mesinha.getId()) && !mesinha.isStatusMesa()) {
                 mesaSelec = mesinha;
             }
         }
@@ -739,7 +731,7 @@ public class GerenciadorMenu {
         System.out.println("Insira o Horario (HH:MM): ");
         String horaReserva = sc.nextLine();
 
-        Garcom g = reserva.escolherGarcom(pessoa);
+        Garcom g = reserva.escolherGarcom();
         if (g == null) {
             return false;
         }
@@ -768,7 +760,7 @@ public class GerenciadorMenu {
 
             switch (opcaoMesa) {
                 case 1:
-                    if (mesa.getListaMesas().isEmpty()) {
+                    if (GerenciadorMesas.getListaMesas().isEmpty()) {
                         System.out.println("Nenhuma Mesa Encontrada");
                         break;
                     } else {
@@ -793,20 +785,15 @@ public class GerenciadorMenu {
                 case 3:
                     mesa.listar();
                     System.out.println("========== Remover Mesa ==========");
-                    System.out.println("Insira o ID da mesa ou digite (0) para voltar: ");
-                    int canidMesa = inserirInt(sc);
+                    System.out.println("Insira o ID da mesa: ");
+                    Long canidMesa = inserirLong(sc);
 
-                    if (canidMesa == 0) {
-                        System.out.println("Voltando...");
-                        break;
-                    }
-
-                    mesa.removerMesa(canidMesa, mesa.getListaMesas());
+                    mesa.removerMesa(canidMesa);
                     break;
                 case 4:
                     temp = 0;
 
-                    if (mesa.getListaMesas().isEmpty()) {
+                    if (GerenciadorMesas.getListaMesas().isEmpty()) {
                         System.out.println("Nenhuma Mesa Registrada");
                         break;
                     }
@@ -823,7 +810,7 @@ public class GerenciadorMenu {
                     }
 
                     Mesa novaMesa = null;
-                    for (Mesa m : mesa.getListaMesas()) {
+                    for (Mesa m : GerenciadorMesas.getListaMesas().values()) {
                         if (modIdMesa == m.getId()) {
                             temp = temp + 1;
                             novaMesa = m;
@@ -836,7 +823,7 @@ public class GerenciadorMenu {
                     }
 
                     int capTemp = novaMesa.getCapacidade();
-                    int idTemp = novaMesa.getId();
+                    Long idTemp = novaMesa.getId();
 
                     System.out.println("Insira a nova capacidade da Mesa (MAX 10 - MIN 2)");
                     int novaCapacidade;
@@ -900,7 +887,6 @@ public class GerenciadorMenu {
 
     public void menuClientes(Scanner sc) {
         int opcaoCliente;
-        int temp;
 
         do {
             System.out.println("========== CLIENTES ==========");
@@ -917,7 +903,7 @@ public class GerenciadorMenu {
 
             switch (opcaoCliente) {
                 case 1:
-                    if (pessoa.getListaClientes().isEmpty()) {
+                    if (GerenciadorDePessoas.getListaClientes().isEmpty()) {
                         System.out.println("Nenhum cliente registrado.");
                     } else {
                         pessoa.listarCliente();
@@ -927,9 +913,7 @@ public class GerenciadorMenu {
                     subMenuClienteCadastro(sc);
                     break;
                 case 3:
-                    temp = 0;
-
-                    if (pessoa.getListaClientes().isEmpty()) {
+                    if (GerenciadorDePessoas.getListaClientes().isEmpty()) {
                         System.out.println("Nenhum Cliente Registrado");
                         break;
                     }
@@ -937,31 +921,21 @@ public class GerenciadorMenu {
                     System.out.println("========== Remover Cliente ==========");
                     pessoa.listarCliente();
 
-                    System.out.println("\nInsira o ID do Cliente ou digite (0) para voltar: ");
-                    int canIdCliente = inserirInt(sc);
+                    System.out.println("\nInsira o ID do Cliente");
+                    Long canIdCliente = inserirLong(sc);
 
-                    if (canIdCliente == 0) {
-                        System.out.println("Voltando...");
+                    // Buscar o cliente diretamente no Map
+                    Cliente canClienteSelec = GerenciadorDePessoas.getListaClientes().get(canIdCliente);
+
+                    if (canClienteSelec == null) {
+                        System.out.println("ID DE CLIENTE INVALIDO.");
                         break;
                     }
 
-                    for (Cliente c : pessoa.getListaClientes()) {
-                        if (canIdCliente == c.getId()) {
-                            temp = temp + 1;
-                        }
-                    }
-
-                    if (temp == 0) {
-                        System.out.println("ID INVALIDO OU NAO ENCONTRADO.");
-                        break;
-                    }
-
-                    pessoa.removerCliente(canIdCliente);
+                    pessoa.removerCliente(canClienteSelec.getId());
                     break;
                 case 4:
-                    temp = 0;
-
-                    if (pessoa.getListaClientes().isEmpty()) {
+                    if (GerenciadorDePessoas.getListaClientes().isEmpty()) {
                         System.out.println("Nenhum Cliente Registrado");
                         break;
                     }
@@ -969,22 +943,14 @@ public class GerenciadorMenu {
                     System.out.println("========== Modificar Cliente ==========");
                     pessoa.listarCliente();
 
-                    System.out.println("\nInsira o ID do Cliente ou digite (0) para voltar: ");
-                    int modIdCliente = inserirInt(sc);
+                    System.out.println("\nInsira o ID do Cliente");
+                    Long modIdCliente = inserirLong(sc);
 
-                    if (modIdCliente == 0) {
-                        System.out.println("Voltando...");
-                        break;
-                    }
+                    // Buscar o cliente diretamente no Map
+                    Cliente modClienteSelec = GerenciadorDePessoas.getListaClientes().get(modIdCliente);
 
-                    for (Cliente c : pessoa.getListaClientes()) {
-                        if (modIdCliente == c.getId()) {
-                            temp = temp + 1;
-                        }
-                    }
-
-                    if (temp == 0) {
-                        System.out.println("ID INVALIDO OU NAO ENCONTRADO.");
+                    if (modClienteSelec == null) {
+                        System.out.println("ID DE CLIENTE INVALIDO.");
                         break;
                     }
 
@@ -998,58 +964,26 @@ public class GerenciadorMenu {
                         case 1:
                             System.out.print("Insira o novo nome: ");
                             String novoNome = sc.nextLine();
-
-                            for (Cliente c : pessoa.getListaClientes()) {
-                                if (modIdCliente == c.getId()) {
-                                    String nomeTemp = c.getNome();
-                                    c.setNome(novoNome);
-                                    System.out.println("Nome: " + nomeTemp + " Modificado para: " + c.getNome());
-                                    break;
-                                }
-                            }
-
+                            modClienteSelec.setNome(novoNome);
+                            System.out.println("Nome modificado para: " + modClienteSelec.getNome());
                             break;
                         case 2:
                             System.out.print("Insira o novo endereco: ");
                             String novoEndereco = sc.nextLine();
-
-                            for (Cliente c : pessoa.getListaClientes()) {
-                                if (modIdCliente == c.getId()) {
-                                    String enderecoTemp = c.getEndereco();
-                                    c.setEndereco(novoEndereco);
-                                    System.out.println("Nome: " + enderecoTemp + " Modificado para: " + c.getEndereco());
-                                    break;
-                                }
-                            }
-
+                            modClienteSelec.setEndereco(novoEndereco);
+                            System.out.println("Endereço modificado para: " + modClienteSelec.getEndereco());
                             break;
                         case 3:
                             System.out.print("Insira o novo telefone: ");
                             String novoTelefone = sc.nextLine();
-
-                            for (Cliente c : pessoa.getListaClientes()) {
-                                if (modIdCliente == c.getId()) {
-                                    String telefoneTemp = c.getTelefone();
-                                    c.setTelefone(novoTelefone);
-                                    System.out.println("Nome: " + telefoneTemp + " Modificado para: " + c.getTelefone());
-                                    break;
-                                }
-                            }
-
+                            modClienteSelec.setTelefone(novoTelefone);
+                            System.out.println("Telefone modificado para: " + modClienteSelec.getTelefone());
                             break;
                         case 4:
                             System.out.print("Insira a nova data de nascimento: ");
                             String novaDataNasc = sc.nextLine();
-
-                            for (Cliente c : pessoa.getListaClientes()) {
-                                if (modIdCliente == c.getId()) {
-                                    String dataNascTemp = c.getDataNasc();
-                                    c.setDataNasc(novaDataNasc);
-                                    System.out.println("Nome: " + dataNascTemp + " Modificado para: " + c.getDataNasc());
-                                    break;
-                                }
-                            }
-
+                            modClienteSelec.setDataNasc(novaDataNasc);
+                            System.out.println("Data de Nascimento modificado para: " + modClienteSelec.getDataNasc());
                             break;
                         default:
                             System.out.println("Opção inserida inválida.");
@@ -1090,7 +1024,6 @@ public class GerenciadorMenu {
 
     public void menuGarcom(Scanner sc) {
         int opcaoGarcom;
-        int temp;
 
         do {
             System.out.println("========== GARCOM ==========");
@@ -1124,9 +1057,7 @@ public class GerenciadorMenu {
                     System.out.println("Garcom cadastrado com sucesso");
                     break;
                 case 3:
-                    temp = 0;
-
-                    if (pessoa.getListaGarcom().isEmpty()) {
+                    if (GerenciadorDePessoas.getListaGarcom().isEmpty()) {
                         System.out.println("Nenhum Garcom Registrado");
                         break;
                     }
@@ -1134,31 +1065,20 @@ public class GerenciadorMenu {
                     System.out.println("========== Remover Garcom ==========");
                     pessoa.listarGarcom();
 
-                    System.out.println("\nInsira o ID do Garcom ou digite (0) para voltar: ");
-                    int canIdGarcom = inserirInt(sc);
+                    System.out.println("\nInsira o ID do Garcom: ");
+                    Long canIdGarcom = inserirLong(sc);
 
-                    if (canIdGarcom == 0) {
-                        System.out.println("Voltando...");
-                        break;
-                    }
+                    Garcom canGarcomSelec = GerenciadorDePessoas.getListaGarcom().get(canIdGarcom);
 
-                    for (Garcom g : pessoa.getListaGarcom()) {
-                        if (canIdGarcom == g.getId()) {
-                            temp = temp + 1;
-                        }
-                    }
-
-                    if (temp == 0) {
-                        System.out.println("ID INVALIDO OU NAO ENCONTRADO.");
+                    if(canGarcomSelec == null){
+                        System.out.println("ID DE GARCOM INVALIDO.");
                         break;
                     }
 
                     pessoa.removerGarcom(canIdGarcom);
                     break;
                 case 4:
-                    temp = 0;
-
-                    if (pessoa.getListaGarcom().isEmpty()) {
+                    if (GerenciadorDePessoas.getListaGarcom().isEmpty()) {
                         System.out.println("Nenhum Garcom Registrado");
                         break;
                     }
@@ -1166,22 +1086,13 @@ public class GerenciadorMenu {
                     System.out.println("========== Modificar Garcom ==========");
                     pessoa.listarGarcom();
 
-                    System.out.println("\nInsira o ID do Garcom ou digite (0) para voltar: ");
-                    int modIdGarcom = inserirInt(sc);
+                    System.out.println("\nInsira o ID do Garcom: ");
+                    Long modIdGarcom = inserirLong(sc);
 
-                    if (modIdGarcom == 0) {
-                        System.out.println("Voltando...");
-                        break;
-                    }
+                    Garcom modGarcomSelec = GerenciadorDePessoas.getListaGarcom().get(modIdGarcom);
 
-                    for (Garcom g : pessoa.getListaGarcom()) {
-                        if (modIdGarcom == g.getId()) {
-                            temp = temp + 1;
-                        }
-                    }
-
-                    if (temp == 0) {
-                        System.out.println("ID INVALIDO OU NAO ENCONTRADO.");
+                    if (modGarcomSelec == null) {
+                        System.out.println("ID DE GARCOM INVALIDO.");
                         break;
                     }
 
@@ -1195,58 +1106,26 @@ public class GerenciadorMenu {
                         case 1:
                             System.out.print("Insira o novo nome: ");
                             String novoNome = sc.nextLine();
-
-                            for (Garcom g : pessoa.getListaGarcom()) {
-                                if (modIdGarcom == g.getId()) {
-                                    String nomeTemp = g.getNome();
-                                    g.setNome(novoNome);
-                                    System.out.println("Nome: " + nomeTemp + " Modificado para: " + g.getNome());
-                                    break;
-                                }
-                            }
-
+                            modGarcomSelec.setNome(novoNome);
+                            System.out.println("Nome Modificado para: " + modGarcomSelec.getNome());
                             break;
                         case 2:
                             System.out.print("Insira o novo endereco: ");
                             String novoEndereco = sc.nextLine();
-
-                            for (Garcom g : pessoa.getListaGarcom()) {
-                                if (modIdGarcom == g.getId()) {
-                                    String enderecoTemp = g.getEndereco();
-                                    g.setEndereco(novoEndereco);
-                                    System.out.println("Endereco: " + enderecoTemp + " Modificado para: " + g.getEndereco());
-                                    break;
-                                }
-                            }
-
+                            modGarcomSelec.setEndereco(novoEndereco);
+                            System.out.println("Endereco Modificado para: " + modGarcomSelec.getEndereco());
                             break;
                         case 3:
                             System.out.print("Insira o novo telefone: ");
                             String novoTelefone = sc.nextLine();
-
-                            for (Garcom g : pessoa.getListaGarcom()) {
-                                if (modIdGarcom == g.getId()) {
-                                    String telefoneTemp = g.getTelefone();
-                                    g.setTelefone(novoTelefone);
-                                    System.out.println("Telefone: " + telefoneTemp + " Modificado para: " + g.getTelefone());
-                                    break;
-                                }
-                            }
-
+                            modGarcomSelec.setTelefone(novoTelefone);
+                            System.out.println("Telefone Modificado para: " + modGarcomSelec.getTelefone());
                             break;
                         case 4:
                             System.out.print("Insira o novo salario: ");
                             float novoSalario = inserirFloat(sc);
-
-                            for (Garcom g : pessoa.getListaGarcom()) {
-                                if (modIdGarcom == g.getId()) {
-                                    float novoSalarioTemp = g.getSalario();
-                                    g.setSalario(novoSalario);
-                                    System.out.println("Salario: " + novoSalarioTemp + " Modificado para: " + g.getSalario());
-                                    break;
-                                }
-                            }
-
+                            modGarcomSelec.setSalario(novoSalario);
+                            System.out.println("Salario Modificado para: " + modGarcomSelec.getSalario());
                             break;
                         default:
                             System.out.println("Opção inserida inválida.");
@@ -1282,7 +1161,7 @@ public class GerenciadorMenu {
             switch (opcaoGerente) {
                 case 1:
                     System.out.println("========== Listar Gerente ==========");
-                    if (pessoa.getListaGerente().isEmpty()) {
+                    if (GerenciadorDePessoas.getListaGerente().isEmpty()) {
                         System.out.println("Não existe gerente cadastrado no momento.");
                     } else {
                         pessoa.listarGerente();
@@ -1303,31 +1182,22 @@ public class GerenciadorMenu {
 
                     gerente = new Gerente(cadNomeGerente, enderecoGerente, cadTelefoneGerente, salarioGerente);
                     pessoa.adicionarGerente(gerente);
-                    System.out.println("Gerente cadastrado com sucesso");
                     break;
                 case 3:
                     System.out.println("========== Remover Gerente ==========");
-                    if (pessoa.getListaGerente().isEmpty()) {
+                    if (GerenciadorDePessoas.getListaGerente().isEmpty()) {
                         System.out.println("Não existe gerente cadastrado no momento.");
                     } else {
                         pessoa.listarGerente();
                     }
 
-                    System.out.println("\nInsira o ID do Gerente ou digite (0) para voltar: ");
-                    int canIdGerente = inserirInt(sc);
-
-                    if (canIdGerente == 0) {
-                        System.out.println("Voltando...");
-                        break;
-                    }
+                    System.out.println("\nInsira o ID do Gerente: ");
+                    Long canIdGerente = inserirLong(sc);
 
                     pessoa.removerGerente(canIdGerente);
-
                     break;
                 case 4:
-                    int temp = 0;
-
-                    if (pessoa.getListaGerente().isEmpty()) {
+                    if (GerenciadorDePessoas.getListaGerente().isEmpty()) {
                         System.out.println("Nenhum Gerente Registrado");
                         break;
                     }
@@ -1335,24 +1205,16 @@ public class GerenciadorMenu {
                     System.out.println("========== Modificar Gerente ==========");
                     pessoa.listarGerente();
 
-                    System.out.println("\nInsira o ID do Gerente ou digite (0) para voltar: ");
-                    int modIdGerente = inserirInt(sc);
+                    System.out.println("\nInsira o ID do Gerente: ");
+                    Long modIdGerente = inserirLong(sc);
 
-                    if (modIdGerente == 0) {
-                        System.out.println("Voltando...");
-                        break;
-                    }
+                    Gerente modGerente = GerenciadorDePessoas.getListaGerente().get(modIdGerente);
 
-                    for (Gerente g : pessoa.getListaGerente()) {
-                        if (modIdGerente == g.getId()) {
-                            temp = temp + 1;
-                        }
-                    }
-
-                    if (temp == 0) {
+                    if(modGerente == null){
                         System.out.println("ID INVALIDO OU NAO ENCONTRADO.");
                         break;
                     }
+
 
                     System.out.println("O Que deseja modificar?");
                     System.out.println("1 - Nome\n2 - Endereco\n3 - Telefone\n4 - Salario");
@@ -1364,57 +1226,26 @@ public class GerenciadorMenu {
                         case 1:
                             System.out.print("Insira o novo nome: ");
                             String novoNome = sc.nextLine();
-
-                            for (Gerente g : pessoa.getListaGerente()) {
-                                if (modIdGerente == g.getId()) {
-                                    String nomeTemp = g.getNome();
-                                    g.setNome(novoNome);
-                                    System.out.println("Nome: " + nomeTemp + " Modificado para: " + g.getNome());
-                                    break;
-                                }
-                            }
-
+                            modGerente.setNome(novoNome);
+                            System.out.println("Nome Modificado para: " + modGerente.getNome());
                             break;
                         case 2:
                             System.out.print("Insira o novo endereco: ");
                             String novoEndereco = sc.nextLine();
-
-                            for (Gerente g : pessoa.getListaGerente()) {
-                                if (modIdGerente == g.getId()) {
-                                    String enderecoTemp = g.getEndereco();
-                                    g.setEndereco(novoEndereco);
-                                    System.out.println("Endereço : " + enderecoTemp + " Modificado para: " + g.getEndereco());
-                                    break;
-                                }
-                            }
-
+                            modGerente.setEndereco(novoEndereco);
+                            System.out.println("Endereco Modificado para: " + modGerente.getEndereco());
                             break;
                         case 3:
                             System.out.print("Insira o novo telefone: ");
                             String novoTelefone = sc.nextLine();
-
-                            for (Gerente g : pessoa.getListaGerente()) {
-                                if (modIdGerente == g.getId()) {
-                                    String telefoneTemp = g.getTelefone();
-                                    g.setTelefone(novoTelefone);
-                                    System.out.println("Telefone: " + telefoneTemp + " Modificado para: " + g.getTelefone());
-                                    break;
-                                }
-                            }
-
+                            modGerente.setTelefone(novoTelefone);
+                            System.out.println("Telefone Modificado para: " + modGerente.getTelefone());
                             break;
                         case 4:
                             System.out.print("Insira o novo salario: ");
                             float novoSalario = inserirFloat(sc);
-
-                            for (Gerente g : pessoa.getListaGerente()) {
-                                if (modIdGerente == g.getId()) {
-                                    float novoSalarioTemp = g.getSalario();
-                                    g.setSalario(novoSalario);
-                                    System.out.println("Salario: " + novoSalarioTemp + " Modificado para: " + g.getSalario());
-                                    break;
-                                }
-                            }
+                            modGerente.setSalario(novoSalario);
+                            System.out.println("Salario Modificado para: " + modGerente.getSalario());
                             break;
                         default:
                             System.out.println("Opção inserida inválida. Tente novamente.");
@@ -1581,37 +1412,28 @@ public class GerenciadorMenu {
                     }
                     break;
                 case 3:
-                    if (pessoa.getListaClientes().isEmpty()) {
+                    if (GerenciadorDePessoas.getListaClientes().isEmpty()) {
                         System.out.println("Nao exitem clientes registrados");
                         break;
                     } else {
                         pessoa.listarCliente();
                     }
-                    boolean certoC = false;
 
                     System.out.println("Insira o id do cliente.");
 
-                    int idCliente = inserirInt(sc);
-                    sc.nextLine();
+                    Long idCliente = inserirLong(sc);
 
-                    Cliente cliente = null;
-                    for (Cliente c : pessoa.getListaClientes()) {
-                        if (c.getId() == idCliente) {
-                            certoC = true;
-                            cliente = c;
-                            System.out.println("Id encontrado.");
-                            break;
-                        }
-                    }
-
-                    if (!certoC) {
+                    Cliente cliente = GerenciadorDePessoas.getListaClientes().get(idCliente);
+                    if (cliente != null) {
+                        System.out.println("Id encontrado.");
+                    } else {
                         System.out.println("Id não encontrado");
                         break;
                     }
 
                     boolean verificarReserva = false;
-                    for (Reserva r : reserva.getListaReservas()) {
-                        if (r.getIdCliente() == idCliente) {
+                    for (Reserva r : GerenciadorReservas.getListaReservas().values()) {
+                        if (Objects.equals(r.getIdCliente(), idCliente)) {
                             verificarReserva = true;
                             System.out.println("Reserva encontrada");
                             break;

@@ -1,11 +1,10 @@
-// Declaração do pacote
 package com.artur.gerenciamento;
 
-import java.util.Comparator;  // Importação da interface Comparator
-import java.util.Set; // Importação da interface Set
-import java.util.TreeSet; // Importação da classe TreeSet
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
 
-import com.artur.controle.ItemPedido; // Importação da classe ItemPedido do pacote com.artur.controle
+import com.artur.controle.ItemPedido;
 
 public class GerenciadorCozinha {
 

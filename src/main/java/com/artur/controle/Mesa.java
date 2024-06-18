@@ -6,9 +6,9 @@ package com.artur.controle;
 
 import com.artur.interfaces.Identificacao;
 
-public class Mesa implements Identificacao {
+public class Mesa implements Identificacao{
 
-    private int idMesa;// Identificador único da mesa
+    private Long idMesa;// Identificador único da mesa
     private int capacidade; // Capacidade máxima de pessoas na mesa
     private boolean statusMesa; // Status da mesa (reservada ou não)
 
@@ -29,7 +29,7 @@ public class Mesa implements Identificacao {
 
     // Implementação do método da interface Identificacao para obter o ID da mesa
     @Override
-    public int getId() {
+    public Long getId() {
         return idMesa;
     }
 
@@ -39,7 +39,7 @@ public class Mesa implements Identificacao {
     }
 
      // Métodos getters e setters para obter e definir o ID da mesa
-    public void setIdMesa(int idMesa) {
+    public void setIdMesa(Long idMesa) {
         this.idMesa = idMesa;
     }
 

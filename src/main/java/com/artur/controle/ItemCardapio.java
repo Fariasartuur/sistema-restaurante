@@ -4,14 +4,14 @@ package com.artur.controle;
 // Esta interface é implementada pela classe ItemCardapio para fornecer um método getId()
 import com.artur.interfaces.Identificacao;
 
-public class ItemCardapio implements Identificacao {
+public class ItemCardapio implements Identificacao{
 
     private String nome;
     private final String tamanho;
     private final String descricao;
     private final String categoria;
     private final double preco;
-    private int idItem;
+    private Long idItem;
 
     
     public ItemCardapio(String nome, String tamanho, String descricao, double preco) {
@@ -73,13 +73,12 @@ public class ItemCardapio implements Identificacao {
 
     // Implementação do método da interface Identificacao para obter o ID do item
     @Override
-    public int getId() {
+    public Long getId() {
         return idItem;
     }
     
     // Método para definir o ID do item
-    public void setIdItem(int idItem) {
-
+    public void setIdItem(Long idItem) {
         this.idItem = idItem;
     }
 

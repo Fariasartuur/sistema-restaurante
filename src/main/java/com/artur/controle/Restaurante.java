@@ -1,8 +1,6 @@
 package com.artur.controle;
 
-import com.artur.gerenciamento.GerenciadorMesas; // Importação da classe GerenciadorMesas
-import com.artur.pessoas.Gerente; // Importação da classe Gerente
- 
+import com.artur.gerenciamento.GerenciadorMesas;
 
 // Declaração da classe Restaurante
 public class Restaurante {
@@ -14,16 +12,14 @@ public class Restaurante {
     private static final String CNPJ = "12.345.678/0001-90"; // CNPJ do restaurante 
 
     // Declaração de variáveis
-    GerenciadorMesas mesa = new GerenciadorMesas(); // Instância de GerenciadorMesas
-    Gerente gerente;  // Declaração de um objeto Gerente
-
+    GerenciadorMesas mesa = new GerenciadorMesas();
 
     // Método privado para contar o número de mesas disponíveis
     private int contMesaDisponiveis(){
         int cont = 0; // Inicializa o contador de mesas disponíveis
 
         // Loop através da lista de mesas
-        for(Mesa m : mesa.getListaMesas()){
+        for(Mesa m : GerenciadorMesas.getListaMesas().values()){
             if(!m.isStatusMesa()){
                 cont++; // Incrementa o contador se a mesa não estiver reservada
             }
@@ -41,15 +37,9 @@ public class Restaurante {
         System.out.println("Telefone: " + TELEFONE);
         System.out.println("CNPJ: " + CNPJ);
         System.out.println("========== Detalhes do Restaurante ==========");
-        System.out.println("Quantidade de Mesas: " + (mesa.getNumGlobal()-1)); // Exibe a quantidade total de mesas, menos 1
-        System.out.println("Quantidade de Mesas Disponiveis: " + contMesaDisponiveis()); // Exibe a quantidade de mesas disponíveis
+        System.out.println("Quantidade de Mesas: " + (mesa.getCountIdMesas() - 1));
+        System.out.println("Quantidade de Mesas Disponiveis: " + contMesaDisponiveis());
         System.out.println("=============================================");
-
-         // Exibe o nome do gerente, se houver
-        if(gerente != null){
-            System.out.println("Gerente: " + gerente.getNome());
-        }
-
     }
 
     
