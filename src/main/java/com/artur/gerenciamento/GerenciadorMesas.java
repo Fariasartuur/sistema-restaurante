@@ -12,7 +12,6 @@ public class GerenciadorMesas implements Listagem {
     private static final Map<Long, Mesa> listaMesas = new LinkedHashMap<>();
     private static Long countIdMesas = 0L;  // Contador global para os IDs das mesas
 
-
      // Método protegido para criar mesas iniciais
     protected void criarMesa() {
         adicionarMesa(new Mesa(2)); // Adiciona uma mesa com capacidade para 2 pessoas
