@@ -1,5 +1,11 @@
 package com.artur;
 
+// Artur Farias Salomão
+// Christian Mendonça Gubany
+// Lucas Santos de Rezende
+// Victor Heredia Moura
+// Victória Ester de Oliveira Jesus
+
 import java.util.Scanner;
 
 import com.artur.controle.Restaurante;
