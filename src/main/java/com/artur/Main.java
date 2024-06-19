@@ -16,40 +16,49 @@ public class Main {
 
     public static void main(String[] args) {
 
-
-        GerenciadorMenu menu = new GerenciadorMenu();
-        Scanner sc = new Scanner(System.in);
-        Restaurante restaurante = new Restaurante();
+        // Criação dos objetos necessários
+        GerenciadorMenu menu = new GerenciadorMenu(); // Objeto para gerenciar o menu
+        Scanner sc = new Scanner(System.in); // Objeto para entrada de dados do teclado
+        Restaurante restaurante = new Restaurante(); // Objeto que representa o restaurante
         
         int opcao;
 
+        // Loop principal do programa
         do {
+            // Exibe o menu principal
             System.out.println("========== RESTAURANTE ==========");
             System.out.println("1 - Inciar Atendimento");
             System.out.println("2 - Administração");
             System.out.println("0 - SAIR");
             System.out.println("==========================");
 
-            opcao = menu.inserirInt(sc);
+            // Obtém a opção do usuário
+            opcao = menu.inserirInt(sc); // Método do objeto GerenciadorMenu para ler um número inteiro
 
             if (opcao == 0) {
                 System.out.println("Saindo...");
                 break;
             }
 
+            // Verifica a opção escolhida pelo usuário
             switch (opcao) {
                 case 1:
+                    // Inicia o atendimento no restaurante
                     restaurante.iniciar();
+                    // Exibe o menu de atendimento e aguarda a interação do usuário
                     menu.menuAtendimento(sc);
                     break;
                 case 2:
+                    // Exibe o menu de administração e aguarda a interação do usuário
                     menu.menuAdministracao(sc);
                     break;
                 default:
+                    // Caso a opção inserida seja inválida, exibe uma mensagem de erro
                     System.out.println("Opcao inserida invalida. Tente Novamente.");
             }
-        } while (opcao != 0);
+        } while (opcao != 0); // O loop continua enquanto a opção inserida for diferente de zero
 
+        // Fecha o scanner para liberar recursos
         sc.close();
     }
 }
