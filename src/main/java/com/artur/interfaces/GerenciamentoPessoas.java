@@ -1,3 +1,5 @@
+//Esse código define uma interface GerenciamentoPessoas que especifica métodos para adicionar, remover e listar clientes, garçons e gerentes em um sistema de gerenciamento de pessoas
+
 package com.artur.interfaces;
 
 import com.artur.pessoas.Cliente;
