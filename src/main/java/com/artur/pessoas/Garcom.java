@@ -1,3 +1,5 @@
+//Este código define a classe Garcom, que herda da classe Pessoa e implementa a interface Identificacao. Ela possui os seguintes atributos privados: dataContratacao para armazenar a data de contratação formatada automaticamente no construtor, salario para o salário do garçom, idGarcom para o identificador único do garçom, e ocupado para indicar se o garçom está ocupado ou não.
+
 package com.artur.pessoas;
 
 import java.time.LocalDate;
