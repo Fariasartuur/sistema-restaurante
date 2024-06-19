@@ -1,9 +1,3 @@
-// Herança (ja usado), Polimorfismo (Ja usado), abstração (Ja Usado), interface (Ja usado)
-
-// Corrigir: erro de duplicação na qnt de item na hora de fazer pedido repetido na cozinha
-
-// Comentar o codigo inteiro explicando oque cada coisa faz
-
 package com.artur;
 
 import java.util.Scanner;
@@ -35,11 +29,6 @@ public class Main {
             // Obtém a opção do usuário
             opcao = menu.inserirInt(sc); // Método do objeto GerenciadorMenu para ler um número inteiro
 
-            if (opcao == 0) {
-                System.out.println("Saindo...");
-                break;
-            }
-
             // Verifica a opção escolhida pelo usuário
             switch (opcao) {
                 case 1:
@@ -51,6 +40,9 @@ public class Main {
                 case 2:
                     // Exibe o menu de administração e aguarda a interação do usuário
                     menu.menuAdministracao(sc);
+                    break;
+                case 0:
+                    System.out.println("Saindo...");
                     break;
                 default:
                     // Caso a opção inserida seja inválida, exibe uma mensagem de erro
