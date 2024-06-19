@@ -1,3 +1,5 @@
+//Esse trecho configura um perfil de inspeção em um IDE para detectar código duplicado em Java, definindo o nível de aviso como "WEAK WARNING" e ativando essa verificação por padrão.
+
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
