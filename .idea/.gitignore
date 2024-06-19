@@ -1,3 +1,4 @@
+//Esse código especifica arquivos e diretórios que devem ser ignorados no controle de versão, como configurações de ambiente de trabalho e armazenamento de dados locais.
 # Default ignored files
 /shelf/
 /workspace.xml
