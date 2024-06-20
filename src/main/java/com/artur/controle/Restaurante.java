@@ -6,7 +6,7 @@ import com.artur.gerenciamento.GerenciadorMesas;
 public class Restaurante {
 
      // Declaração de constantes
-    private final String NOME_RESTAURANTE = ""; // Nome do restaurante (vazio por padrão)
+    private final String NOME_RESTAURANTE = "Restaurante"; // Nome do restaurante (vazio por padrão)
     private static final String ENDERECO = "UNASP SP - Estr. de Itapecerica, 5859 - Capao Redondo, São Paulo - SP, 05890-020"; // Endereço do restaurante
     private static final String TELEFONE = "(11) 1234-5678"; // Telefone do restaurante
     private static final String CNPJ = "12.345.678/0001-90"; // CNPJ do restaurante 
